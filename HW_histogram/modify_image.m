@@ -18,19 +18,24 @@ MaxValue = max(max(Y));
 Wish_MinValue = 0;
 Wish_MaxValue = 255;
 
-isfloat(sampleDivide);
-fmax = float(MaxValue);
-fmin = float(MaxValue);
+
+fmax = single(MaxValue);
+fmin = single(MaxValue);
 
 sampleDivide = fmax / fmin;
 
-% for I_index = 1:WidthSize
-%     for J_index = 1:LengthSize
-%         if X[] >=
-            
-%         end
-%     end
-% end
+sampleDivide2 = 23.5 / 41.8
+
+fmax_float = single(fmax);
+
+abcd = single(MaxValue-MinValue);
+abcd2 = single(90*255)/abcd;
+
+for I_index = 1:WidthSize
+    for J_index = 1:LengthSize
+        ResultImage(J_index,I_index) = (single(ResultImage(J_index,I_index)-(MinValue)) * single(255))/(single(MaxValue-MinValue));
+    end
+end
 
 
 ModifiedImage = imread('picture-example-Low.png');
@@ -42,6 +47,6 @@ subplot(3, 2, 1); imshow(ImageToModify); title('ImageToModify');
 subplot(3, 2, 2); histogram(ImageToModify); title('Hist1');
 subplot(3, 2, 3); imshow(ModifiedImage); title('ModifiedImage');
 subplot(3, 2, 4); histogram(ModifiedImage); title('Hist2');
-subplot(3, 2, 5); imshow(ModifiedImage); title('ModifiedImage');
-subplot(3, 2, 6); histogram(ModifiedImage); title('Hist2');
+subplot(3, 2, 5); imshow(ResultImage); title('ResultImage');
+subplot(3, 2, 6); histogram(ResultImage); title('Hist3');
 
