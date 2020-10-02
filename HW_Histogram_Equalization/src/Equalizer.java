@@ -4,9 +4,7 @@ import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
-import java.util.Vector;
 
 public class Equalizer {
 
@@ -15,9 +13,9 @@ public class Equalizer {
     public static ArrayList<Pair> arrOfPairsPerIntense[];
     public static int mean;
 
-    public static ArrayList<Pair_Value> aboveTheMean;
-    public static ArrayList<Pair_Value> aroundTheMean;
-    public static ArrayList<Pair_Value> belowTheMean;
+    public static ArrayList<int> aboveTheMean;
+    public static ArrayList<int> aroundTheMean;
+    public static ArrayList<int> belowTheMean;
 
     public static void main(String[] args) throws IOException {
 
@@ -87,8 +85,7 @@ public class Equalizer {
                 Pair_Value selectedBelowMean =
                         belowTheMean.get(belowTheMean.size()-1);
 
-                SwapPairValue(aboveTheMean,belowTheMean,
-                        0,belowTheMean.size()-1);
+                swapRandomPixel(aboveTheMean,belowTheMean);
 
             }
         }
@@ -112,13 +109,14 @@ public class Equalizer {
     }
 
 
-    public static void SwapPairValue(ArrayList<Pair_Value> a_array,
-                                     ArrayList<Pair_Value> b_array,
-                                     int a_pv,
-                                     int b_pv){
+    public static void swapRandomPixel(ArrayList<Pair_Value> a_array,
+                                       ArrayList<Pair_Value> b_array){
 
-        Pair_Value aPair = a_array.remove(a_pv);
-        Pair_Value bPair = b_array.remove(b_pv);
+        Random rand = new Random();
+
+        int randomNum = rand.nextInt(a_array.size());
+
+        Pair_Value aPair = a_array.remove(randomNum);
 
         int xValue = aPair.value;
         int yValue = bPair.value;
@@ -134,6 +132,8 @@ public class Equalizer {
     }
 
     private static void DetermineGroupAndAdd(Pair_Value aPair) {
+
+        //this is wrong we should've look at histogram
 
         int intensity = aPair.value;
 
@@ -153,7 +153,7 @@ public class Equalizer {
         System.out.println(belowTheMean.size()+"belowTheMean.size()");
     }
 
-    public static void SwapRandomPixel
+    public static void swapRandomPixel
             (int startIntense,int destIntense) throws Exception {
 
         int startIntenseSize = arrOfPairsPerIntense[startIntense].size();
