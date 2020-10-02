@@ -65,139 +65,110 @@ public class Equalizer {
 
         SortArrays();
 
+        System.out.println("before :");
         logGroupSizes();
         logEntireGroups();
 
-        while (aboveTheMean.size()<=20) {
+        int loops = 4000;
+
+        while (loops!=0) {
+            //seems working... now we need a better logic
             if (belowTheMean.size()>0 && aboveTheMean.size()>0){
                 //select one of the group "the above the mean"
-                int selectedAboveMean = aboveTheMean.get(0);
+                int selectedAboveMean = aboveTheMean.remove(aboveTheMean.size()-1);
 
                 //scan for one of the group "the below the mean"
                 int selectedBelowMean =
-                        belowTheMean.get(belowTheMean.size()-1);
+                        belowTheMean.remove(0);
 
                 swapRandomPixel(selectedAboveMean,selectedBelowMean);
 
             }
+            loops--;
         }
 
+        System.out.println("after :");
         logGroupSizes();
-
-        logEntireGroups();
+//        logEntireGroups();
 
     }//main
 
     private static void determineStatusOfGroups() {
 
         for (int i = 0; i <numPerIntensity.length ; i++) {
-            int intenseFreq = numPerIntensity[i];
-
-            if (intenseFreq>(mean+1)){
-                aboveTheMean.add(i);
-            }else if (intenseFreq<mean){
-                belowTheMean.add(i);
-            }else{
-                aroundTheMean.add(i);
-            }
+            determineIntensityGroupStatus(i);
         }
     }
 
     private static void SortArrays() {
-        aboveTheMean.sort(Integer::compareTo);
-        aroundTheMean.sort(Integer::compareTo);
-        belowTheMean.sort(Integer::compareTo);
+        aboveTheMean.sort((o1, o2) -> {return Integer.compare(numPerIntensity[((int) o1)],
+            numPerIntensity[((int) o2)]);});
+        aroundTheMean.sort((o1, o2) -> {return Integer.compare(numPerIntensity[((int) o1)],
+                numPerIntensity[((int) o2)]);});
+        belowTheMean.sort((o1, o2) -> {return Integer.compare(numPerIntensity[((int) o1)],
+                numPerIntensity[((int) o2)]);});
     }
 
 
-    public static void swapRandomPixel(int startIntense,int destIntense){
+    public static void swapRandomPixel(int startIntense, int destIntense){
+
+        System.out.println("so we wanna swap : start : " +
+                startIntense + " dest : "+ destIntense);
 
         Random rand = new Random();
         int randomPixelIndex = rand.nextInt
                 (arrOfPairsPerIntense[startIntense].size());
 
-
-
+        Pair randomPixel =
+                arrOfPairsPerIntense[startIntense].remove(randomPixelIndex);
+        arrOfPairsPerIntense[destIntense].add(randomPixel);
 
         numPerIntensity[startIntense]--;
         numPerIntensity[destIntense]++;
 
-        Random rand = new Random();
-        int randomNum = rand.nextInt(a_array.size());
 
-
-        // so we should get a pixel
-
-        Pair_Value aPair = a_array.remove(randomNum);
-
-        int xValue = aPair.value;
-        int yValue = bPair.value;
-
-        aPair.value = yValue;
-        bPair.value = xValue;
-
-        DetermineGroupAndAdd(aPair);
-        DetermineGroupAndAdd(bPair);
-
+        determineIntensityGroupStatus(startIntense);
+        determineIntensityGroupStatus(destIntense);
 
         SortArrays();
     }
 
-    private static void DetermineGroupAndAdd(Pair_Value aPair) {
+    private static void determineIntensityGroupStatus(int intensityGroup) {
 
-        //this is wrong we should've look at histogram
+        int intenseFreq = numPerIntensity[intensityGroup];
 
-        int intensity = aPair.value;
-
-        if (intensity>(mean+1)){
-            aboveTheMean.add(aPair);
-        }else if (intensity<mean){
-            belowTheMean.add(aPair);
+        if (intenseFreq>(mean+1)){
+            aboveTheMean.add(intensityGroup);
+        }else if (intenseFreq<mean){
+            belowTheMean.add(intensityGroup);
         }else{
-            aroundTheMean.add(aPair);
+            aroundTheMean.add(intensityGroup);
         }
 
     }
 
     public static void logGroupSizes() {
-        System.out.println(aboveTheMean.size()+"aboveTheMean.size()");
-        System.out.println(aroundTheMean.size()+"aroundTheMean.size()");
-        System.out.println(belowTheMean.size()+"belowTheMean.size()");
+        System.out.println("aboveTheMean.size() : " + aboveTheMean.size());
+        System.out.println("aroundTheMean.size() : " + aroundTheMean.size());
+        System.out.println("belowTheMean.size() : " + belowTheMean.size());
     }
 
     public static void logEntireGroups() {
         for (int i = 0; i <aboveTheMean.size() ; i++) {
-            System.out.println("above i : "+ i + " : " + aboveTheMean.get(i));
+            System.out.println("above i : "+ i + " inten : " + aboveTheMean.get(i)
+                    + " freq : " + numPerIntensity[aboveTheMean.get(i)]);
         }
         for (int i = 0; i <aroundTheMean.size() ; i++) {
-            System.out.println("around i : "+ i + " : " + aroundTheMean.get(i));
+            System.out.println("around i : "+ i + " inten : " + aroundTheMean.get(i)
+                    + " freq : " +  numPerIntensity[aroundTheMean.get(i)]);
         }
         for (int i = 0; i <belowTheMean.size() ; i++) {
-            System.out.println("below i : "+ i + " : " + belowTheMean.get(i));
+            System.out.println("below i : "+ i + " inten : "  + belowTheMean.get(i)
+                    + " freq : " +  numPerIntensity[belowTheMean.get(i)]);
         }
 
     }
 
-//    public static void swapRandomPixel
-//            (int startIntense,int destIntense) throws Exception {
-//
-//        int startIntenseSize = arrOfPairsPerIntense[startIntense].size();
-//        int destIntenseSize = arrOfPairsPerIntense[destIntense].size();
-//
-//        if(startIntense<=0){
-//            throw new Exception("error in start size");
-//        }
-//
-//        numPerIntensity[startIntense]--;
-//        numPerIntensity[destIntense]++;
-//
-//        Random rand = new Random();
-//
-//        float randomNum = rand.nextInt(startIntenseSize);
-//
-//        System.out.println("randomNum : " + randomNum);
-//
-//    }
 
     public static void EqualizeForIntense(int intesity) throws Exception {
 
@@ -225,6 +196,9 @@ class Pair_Value{
     }
 
     public int compareTo(Pair_Value pv) {
-        return Integer.compare(pv.value,this.value);
+        //this logic is wrong
+        return Integer.compare(Equalizer.numPerIntensity[this.value],
+                Equalizer.numPerIntensity[pv.value]);
+//        return Integer.compare(pv.value,this.value);
     }
 }
