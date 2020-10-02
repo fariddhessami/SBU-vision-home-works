@@ -13,9 +13,9 @@ public class Equalizer {
     public static ArrayList<Pair> arrOfPairsPerIntense[];
     public static int mean;
 
-    public static ArrayList<int> aboveTheMean;
-    public static ArrayList<int> aroundTheMean;
-    public static ArrayList<int> belowTheMean;
+    public static ArrayList<Integer> aboveTheMean;
+    public static ArrayList<Integer> aroundTheMean;
+    public static ArrayList<Integer> belowTheMean;
 
     public static void main(String[] args) throws IOException {
 
@@ -57,64 +57,76 @@ public class Equalizer {
 
                 arrOfPairsPerIntense[intensity].add(currentPair);
 
-                DetermineGroupAndAdd(currentPv);
+//                DetermineGroupAndAdd(currentPv);
             }
         }
 
+        determineStatusOfGroups();
+
         SortArrays();
 
-//        for (int i = 0; i <grayScaleRange ; i++) {
-//            System.out.println("intense : "+ i + " : " + numPerIntensity[i]);
-//        }
-//        for (int i = 0; i <grayScaleRange ; i++) {
-//            System.out.println("arr size : "+ i + " : " + arrOfPairsPerIntense[i].size());
-//        }
-//
-//        for (int i = 0; i <aboveTheMean.size() ; i++) {
-//            System.out.println("above i : "+ i + " : " + aboveTheMean.get(i).value);
-//        }
-
-        logGroups();
+        logGroupSizes();
+        logEntireGroups();
 
         while (aboveTheMean.size()<=20) {
             if (belowTheMean.size()>0 && aboveTheMean.size()>0){
                 //select one of the group "the above the mean"
-                Pair_Value selectedAboveMean = aboveTheMean.get(0);
+                int selectedAboveMean = aboveTheMean.get(0);
 
                 //scan for one of the group "the below the mean"
-                Pair_Value selectedBelowMean =
+                int selectedBelowMean =
                         belowTheMean.get(belowTheMean.size()-1);
 
-                swapRandomPixel(aboveTheMean,belowTheMean);
+                swapRandomPixel(selectedAboveMean,selectedBelowMean);
 
             }
         }
 
-        logGroups();
+        logGroupSizes();
 
-//        for (int i = 0; i <aboveTheMean.size() ; i++) {
-//            System.out.println("above i : "+ i + " : " + aboveTheMean.get(i).value);
-//        }
-//
-//        for (int i = 0; i <belowTheMean.size() ; i++) {
-//            System.out.println("below i : "+ i + " : " + belowTheMean.get(i).value);
-//        }
+        logEntireGroups();
 
     }//main
 
+    private static void determineStatusOfGroups() {
+
+        for (int i = 0; i <numPerIntensity.length ; i++) {
+            int intenseFreq = numPerIntensity[i];
+
+            if (intenseFreq>(mean+1)){
+                aboveTheMean.add(i);
+            }else if (intenseFreq<mean){
+                belowTheMean.add(i);
+            }else{
+                aroundTheMean.add(i);
+            }
+        }
+    }
+
     private static void SortArrays() {
-        aboveTheMean.sort(Pair_Value::compareTo);
-        aroundTheMean.sort(Pair_Value::compareTo);
-        belowTheMean.sort(Pair_Value::compareTo);
+        aboveTheMean.sort(Integer::compareTo);
+        aroundTheMean.sort(Integer::compareTo);
+        belowTheMean.sort(Integer::compareTo);
     }
 
 
-    public static void swapRandomPixel(ArrayList<Pair_Value> a_array,
-                                       ArrayList<Pair_Value> b_array){
+    public static void swapRandomPixel(int startIntense,int destIntense){
 
         Random rand = new Random();
+        int randomPixelIndex = rand.nextInt
+                (arrOfPairsPerIntense[startIntense].size());
 
+
+
+
+        numPerIntensity[startIntense]--;
+        numPerIntensity[destIntense]++;
+
+        Random rand = new Random();
         int randomNum = rand.nextInt(a_array.size());
+
+
+        // so we should get a pixel
 
         Pair_Value aPair = a_array.remove(randomNum);
 
@@ -147,32 +159,45 @@ public class Equalizer {
 
     }
 
-    public static void logGroups() {
+    public static void logGroupSizes() {
         System.out.println(aboveTheMean.size()+"aboveTheMean.size()");
         System.out.println(aroundTheMean.size()+"aroundTheMean.size()");
         System.out.println(belowTheMean.size()+"belowTheMean.size()");
     }
 
-    public static void swapRandomPixel
-            (int startIntense,int destIntense) throws Exception {
-
-        int startIntenseSize = arrOfPairsPerIntense[startIntense].size();
-        int destIntenseSize = arrOfPairsPerIntense[destIntense].size();
-
-        if(startIntense<=0){
-            throw new Exception("error in start size");
+    public static void logEntireGroups() {
+        for (int i = 0; i <aboveTheMean.size() ; i++) {
+            System.out.println("above i : "+ i + " : " + aboveTheMean.get(i));
+        }
+        for (int i = 0; i <aroundTheMean.size() ; i++) {
+            System.out.println("around i : "+ i + " : " + aroundTheMean.get(i));
+        }
+        for (int i = 0; i <belowTheMean.size() ; i++) {
+            System.out.println("below i : "+ i + " : " + belowTheMean.get(i));
         }
 
-        numPerIntensity[startIntense]--;
-        numPerIntensity[destIntense]++;
-
-        Random rand = new Random();
-
-        float randomNum = rand.nextInt(startIntenseSize);
-
-        System.out.println("randomNum : " + randomNum);
-
     }
+
+//    public static void swapRandomPixel
+//            (int startIntense,int destIntense) throws Exception {
+//
+//        int startIntenseSize = arrOfPairsPerIntense[startIntense].size();
+//        int destIntenseSize = arrOfPairsPerIntense[destIntense].size();
+//
+//        if(startIntense<=0){
+//            throw new Exception("error in start size");
+//        }
+//
+//        numPerIntensity[startIntense]--;
+//        numPerIntensity[destIntense]++;
+//
+//        Random rand = new Random();
+//
+//        float randomNum = rand.nextInt(startIntenseSize);
+//
+//        System.out.println("randomNum : " + randomNum);
+//
+//    }
 
     public static void EqualizeForIntense(int intesity) throws Exception {
 
