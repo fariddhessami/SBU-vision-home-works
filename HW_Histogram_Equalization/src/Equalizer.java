@@ -73,27 +73,46 @@ public class Equalizer {
         logGroupSizes();
         logEntireGroups();
 
-        int loops = 4000;
+        int loops = 40;
+        int subLoops = 4000;
 
-        while (loops!=0) {
-            //seems working... now we need a better logic
-            if (belowTheMean.size()>0 && aboveTheMean.size()>0){
-                //select one of the group "the above the mean"
-                int selectedAboveMean = aboveTheMean.remove(aboveTheMean.size()-1);
-
-                //scan for one of the group "the below the mean"
-                int selectedBelowMean =
-                        belowTheMean.remove(0);
-
-                swapRandomPixel(selectedAboveMean,selectedBelowMean);
-
+        for (int i = 0; i <loops ; i++) {
+            for (int j = 0; j <4000 ; j++) {
+                if (belowTheMean.size()>0 && aboveTheMean.size()>0){
+                    Random random = new Random();
+                    int randomAboveIndex = random.nextInt(aboveTheMean.size());
+                    int randomAbove = aboveTheMean.remove(randomAboveIndex);
+                    int answerBelowMean = findNearBelowMean(randomAbove,i+1);
+                    if (answerBelowMean !=-1){
+                        int answerIndex = belowTheMean.indexOf(answerBelowMean);
+                        belowTheMean.remove(answerIndex);
+                        swapRandomPixel(randomAbove,answerBelowMean);
+                    }
+                }
             }
-            loops--;
         }
+
+
+//        while (loops!=0) {
+//            //seems working... now we need a better logic
+//            if (belowTheMean.size()>0 && aboveTheMean.size()>0){
+//                //select one of the group "the above the mean"
+//                int selectedAboveMean = aboveTheMean.remove(aboveTheMean.size()-1);
+//
+//                //scan for one of the group "the below the mean"
+//                int selectedBelowMean =
+//                        belowTheMean.remove(0);
+//
+//                swapRandomPixel(selectedAboveMean,selectedBelowMean);
+//
+//            }
+//            loops--;
+//        }
 
         System.out.println("after :");
         logGroupSizes();
         logEntireGroups();
+        logEntireStatusOfGroups();
 
     }//main
 
@@ -154,6 +173,9 @@ public class Equalizer {
         }
 
         statusPerIntensity[intensityGroup] = iStatus;
+
+        System.out.println("log : intensity : "+ intensityGroup +
+                " has been found : " + iStatus + " freq : "+intenseFreq);
     }
 
     public static void logGroupSizes() {
@@ -179,9 +201,35 @@ public class Equalizer {
     }
 
 
-    public static void EqualizeForIntense(int intesity) throws Exception {
+    public static int findNearBelowMean(int aboveIntense,int scanRadius) {
 
+        int candidateIntense = -1;
+
+        for (int i = 1; i <scanRadius+1 ; i++) {
+            if( !((aboveIntense + i >=grayScaleRange) || (aboveIntense + i < 0)) ){
+                if(statusPerIntensity[aboveIntense + i] == IntensityStatus.below){
+                    candidateIntense = aboveIntense + i;
+                }
+            }
+
+            if( !((aboveIntense - i >=grayScaleRange) || (aboveIntense - i < 0)) ){
+                if(statusPerIntensity[aboveIntense - i] == IntensityStatus.below){
+                    candidateIntense = aboveIntense - i;
+                }
+            }
+        }
+
+        return candidateIntense;
     }
+
+    public static void logEntireStatusOfGroups() {
+        for (int i = 0; i <statusPerIntensity.length ; i++) {
+            System.out.println("intense : " + i +
+                    " status :" + statusPerIntensity[i] +
+                    " freq : " + numPerIntensity[i]);
+        }
+    }
+
 
 }
 
