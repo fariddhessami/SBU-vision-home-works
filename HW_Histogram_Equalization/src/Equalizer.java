@@ -86,6 +86,8 @@ public class Equalizer {
         logEntireGroups();
         logGroupSizes();
         logSumofGroupSizes();
+        System.out.println("before 2:");
+        printAllPairs();
 
         int loops = grayScaleRange;
         int subLoops = 80000;
@@ -130,27 +132,33 @@ public class Equalizer {
         logEntireStatusOfGroups();
 
 
+        printAllPairs();
+
         renderResultImage();
         writeImage();
 
     }//main
 
     private static void writeImage() throws IOException {
-        BufferedImage resI = new
+        BufferedImage resBufImg = new
                 BufferedImage(resultImgArr.length,
                 resultImgArr[0].length,
                 BufferedImage.TYPE_INT_ARGB);
 
         for (int i = 0; i <resultImgArr.length ; i++) {
             for (int j = 0; j <resultImgArr[0].length ; j++) {
-                resI.setRGB(i,j,resultImgArr[i][j]);
+                resBufImg.setRGB(i,j,resultImgArr[i][j]);
                 System.out.println("hello : i "+i+" j "+j+ " : "+ resultImgArr[i][j]);
             }
         }
 
-        File f = new File("C:\\Users\\Faridodin\\Desktop\\iiiiii\\Output.jpg");
-        ImageIO.write(resI, "jpg", f);
-        System.out.println("alo!" + resultImgArr.length  + " , " + resultImgArr[0].length);
+        try {
+            File f = new File("picture-result.png");
+            ImageIO.write(resBufImg, "png", f);
+            System.out.println("alo! " + resultImgArr.length  + " , " + resultImgArr[0].length);
+        }catch (Exception e){
+            System.out.println(e.toString());
+        }
     }
 
     private static void determineStatusOfGroups() {
@@ -297,6 +305,13 @@ public class Equalizer {
         }
     }
 
+    public static void printAllPairs() {
+        for (int i = 0; i <arrOfPairsPerIntense.length ; i++) {
+            for (Pair pair:arrOfPairsPerIntense[i]) {
+                System.out.println("a pair x "+pair.x+" y "+ pair.y + " intensity : " + i);
+            }
+        }
+    }
 
 }
 
@@ -306,7 +321,7 @@ class Pair{
 
     public Pair(int i, int j) {
         this.x=i;
-        this.x=j;
+        this.y=j;
     }
 }
 
