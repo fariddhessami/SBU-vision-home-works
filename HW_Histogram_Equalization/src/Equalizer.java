@@ -90,7 +90,7 @@ public class Equalizer {
 
 
         int loops = grayScaleRange;
-        int subLoops = 100000;
+        int subLoops = 20000;
 
         for (int i = 0; i <loops ; i++) {
             for (int j = 0; j <subLoops ; j++) {
@@ -104,6 +104,17 @@ public class Equalizer {
                         belowTheMean.remove(answerIndex);
                         aboveTheMean.remove(randomAboveIndex);
                         swapRandomPixel(randomAbove,answerBelowMean);
+                    }
+                }else if(aboveTheMean.size()>0){
+                    Random random = new Random();
+                    int randomAboveIndex = random.nextInt(aboveTheMean.size());
+                    int randomAbove = aboveTheMean.get(randomAboveIndex);
+                    int answerAroundMean = findNearAroundMean(randomAbove,i+1);
+                    if (answerAroundMean !=-1){
+                        int answerIndex = aroundTheMean.indexOf(answerAroundMean);
+                        aroundTheMean.remove(answerIndex);
+                        aboveTheMean.remove(randomAboveIndex);
+                        swapRandomPixel(randomAbove,answerAroundMean);
                     }
                 }
             }
@@ -299,6 +310,26 @@ public class Equalizer {
         return candidateIntense;
     }
 
+    private static int findNearAroundMean(int aboveIntense, int scanRadius) {
+        int candidateIntense = -1;
+
+        for (int i = 1; i <scanRadius+1 ; i++) {
+            if( !((aboveIntense + i >=grayScaleRange) || (aboveIntense + i < 0)) ){
+                if(statusPerIntensity[aboveIntense + i] == IntensityStatus.around){
+                    candidateIntense = aboveIntense + i;
+                }
+            }
+
+            if( !((aboveIntense - i >=grayScaleRange) || (aboveIntense - i < 0)) ){
+                if(statusPerIntensity[aboveIntense - i] == IntensityStatus.around){
+                    candidateIntense = aboveIntense - i;
+                }
+            }
+        }
+
+        return candidateIntense;
+    }
+
     public static void logEntireStatusOfGroups() {
         for (int i = 0; i <statusPerIntensity.length ; i++) {
             System.out.println("intensity : " + i +
@@ -317,7 +348,9 @@ public class Equalizer {
 
 }
 
-class Pair{
+
+
+    class Pair{
     public int x;
     public int y;
 
