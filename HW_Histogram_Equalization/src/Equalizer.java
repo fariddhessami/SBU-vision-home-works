@@ -72,7 +72,7 @@ public class Equalizer {
                 arrOfPairsPerIntense[intensity].add(currentPair);
                 System.out.println("salam 1234");
 
-                System.out.println("hello0 : x "+i+" y "+j+ " imgArr[i][j] : " + imgArr[i][j]);
+
 
 //                DetermineGroupAndAdd(currentPv);
             }
@@ -83,14 +83,14 @@ public class Equalizer {
         SortArrays();
 
         System.out.println("before :");
-        logEntireGroups();
+//        logEntireGroups();
         logGroupSizes();
         logSumofGroupSizes();
         System.out.println("before 2:");
-        printAllPairs();
+
 
         int loops = grayScaleRange;
-        int subLoops = 80000;
+        int subLoops = 100000;
 
         for (int i = 0; i <loops ; i++) {
             for (int j = 0; j <subLoops ; j++) {
@@ -128,11 +128,11 @@ public class Equalizer {
 
         System.out.println("after :");
         logGroupSizes();
-        logEntireGroups();
+//        logEntireGroups();
         logEntireStatusOfGroups();
 
 
-        printAllPairs();
+
 
         renderResultImage();
         writeImage();
@@ -150,7 +150,7 @@ public class Equalizer {
                 Color gray = new Color(resultImgArr[i][j],
                         resultImgArr[i][j], resultImgArr[i][j]);
                 resBufImg.setRGB(i,j,gray.getRGB());
-                System.out.println("hello : i "+i+" j "+j+ " : "+ resultImgArr[i][j]);
+
             }
         }
 
@@ -210,7 +210,7 @@ public class Equalizer {
 
     public static void renderResultImage() {
         System.out.println("rendering : ...");
-        System.out.println("rendering : ... hey : ");
+
 
         for (int i = 0; i <arrOfPairsPerIntense.length ; i++) {
             for (Pair pair:arrOfPairsPerIntense[i]) {
@@ -218,11 +218,11 @@ public class Equalizer {
                 int x = pair.x;
                 int y = pair.y;
 
-                System.out.println("helloR : x "+x+" y "+y+ " : ");
+
 
                 resultImgArr[x][y] = i;
 
-                System.out.println("resultImgArr[x][y] : "+ resultImgArr[x][y]);
+
             }
         }
     }
