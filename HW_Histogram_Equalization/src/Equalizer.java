@@ -1,4 +1,5 @@
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
@@ -19,6 +20,10 @@ public class Equalizer {
 
     public static IntensityStatus statusPerIntensity[];
 
+    public static  int[][] resultImgArr;
+
+    public static int wi,hi;
+
     public static void main(String[] args) throws IOException {
 
 
@@ -28,12 +33,17 @@ public class Equalizer {
         int width = img.getWidth();
         int height = img.getHeight();
 
+        wi=width;
+        hi=height;
+
         int numOfPixels = width*height;
 
         mean =  numOfPixels /  grayScaleRange;
         System.out.println("mean : " + mean);
 
         int[][] imgArr = new int[width][height];
+
+        resultImgArr = new int[width][height];
 
         numPerIntensity = new int[grayScaleRange];
 
@@ -60,6 +70,9 @@ public class Equalizer {
                 Pair_Value currentPv = new Pair_Value(intensity,currentPair);
 
                 arrOfPairsPerIntense[intensity].add(currentPair);
+                System.out.println("salam 1234");
+
+                System.out.println("hello0 : x "+i+" y "+j+ " imgArr[i][j] : " + imgArr[i][j]);
 
 //                DetermineGroupAndAdd(currentPv);
             }
@@ -70,22 +83,24 @@ public class Equalizer {
         SortArrays();
 
         System.out.println("before :");
-        logGroupSizes();
         logEntireGroups();
+        logGroupSizes();
+        logSumofGroupSizes();
 
-        int loops = 40;
-        int subLoops = 4000;
+        int loops = grayScaleRange;
+        int subLoops = 80000;
 
         for (int i = 0; i <loops ; i++) {
-            for (int j = 0; j <4000 ; j++) {
+            for (int j = 0; j <subLoops ; j++) {
                 if (belowTheMean.size()>0 && aboveTheMean.size()>0){
                     Random random = new Random();
                     int randomAboveIndex = random.nextInt(aboveTheMean.size());
-                    int randomAbove = aboveTheMean.remove(randomAboveIndex);
+                    int randomAbove = aboveTheMean.get(randomAboveIndex);
                     int answerBelowMean = findNearBelowMean(randomAbove,i+1);
                     if (answerBelowMean !=-1){
                         int answerIndex = belowTheMean.indexOf(answerBelowMean);
                         belowTheMean.remove(answerIndex);
+                        aboveTheMean.remove(randomAboveIndex);
                         swapRandomPixel(randomAbove,answerBelowMean);
                     }
                 }
@@ -114,7 +129,29 @@ public class Equalizer {
         logEntireGroups();
         logEntireStatusOfGroups();
 
+
+        renderResultImage();
+        writeImage();
+
     }//main
+
+    private static void writeImage() throws IOException {
+        BufferedImage resI = new
+                BufferedImage(resultImgArr.length,
+                resultImgArr[0].length,
+                BufferedImage.TYPE_INT_ARGB);
+
+        for (int i = 0; i <resultImgArr.length ; i++) {
+            for (int j = 0; j <resultImgArr[0].length ; j++) {
+                resI.setRGB(i,j,resultImgArr[i][j]);
+                System.out.println("hello : i "+i+" j "+j+ " : "+ resultImgArr[i][j]);
+            }
+        }
+
+        File f = new File("C:\\Users\\Faridodin\\Desktop\\iiiiii\\Output.jpg");
+        ImageIO.write(resI, "jpg", f);
+        System.out.println("alo!" + resultImgArr.length  + " , " + resultImgArr[0].length);
+    }
 
     private static void determineStatusOfGroups() {
 
@@ -135,9 +172,9 @@ public class Equalizer {
 
     public static void swapRandomPixel(int startIntense, int destIntense){
 
-        System.out.println("so we wanna swap : start intensity : " +
-                startIntense + " with freq : " + numPerIntensity[startIntense] +
-                " dest intensity : " + destIntense  + " with freq : " + numPerIntensity[destIntense]);
+//        System.out.println("so we wanna swap : start intensity : " +
+//                startIntense + " with freq : " + numPerIntensity[startIntense] +
+//                " dest intensity : " + destIntense  + " with freq : " + numPerIntensity[destIntense]);
 
         Random rand = new Random();
         int randomPixelIndex = rand.nextInt
@@ -146,6 +183,8 @@ public class Equalizer {
         Pair randomPixel =
                 arrOfPairsPerIntense[startIntense].remove(randomPixelIndex);
         arrOfPairsPerIntense[destIntense].add(randomPixel);
+
+        System.out.println("behold : pixel pair : "+ randomPixel.x + " , " + randomPixel.y);
 
         numPerIntensity[startIntense]--;
         numPerIntensity[destIntense]++;
@@ -157,6 +196,25 @@ public class Equalizer {
         logSumofGroupSizes();
 
         SortArrays();
+    }
+
+    public static void renderResultImage() {
+        System.out.println("rendering : ...");
+        System.out.println("rendering : ... hey : ");
+
+        for (int i = 0; i <arrOfPairsPerIntense.length ; i++) {
+            for (Pair pair:arrOfPairsPerIntense[i]) {
+
+                int x = pair.x;
+                int y = pair.y;
+
+                System.out.println("helloR : x "+x+" y "+y+ " : ");
+
+                resultImgArr[x][y] = i;
+
+                System.out.println("resultImgArr[x][y] : "+ resultImgArr[x][y]);
+            }
+        }
     }
 
     private static void determineIntensityGroupStatus(int intensityGroup) {
@@ -177,9 +235,9 @@ public class Equalizer {
 
         statusPerIntensity[intensityGroup] = iStatus;
 
-        System.out.println("log : intensity : "+ intensityGroup +
-                " has been found : " + iStatus + " freq : "+intenseFreq);
-        logGroupSizes();
+//        System.out.println("log : intensity : "+ intensityGroup +
+//                " has been found : " + iStatus + " freq : "+intenseFreq);
+//        logGroupSizes();
     }
 
     public static void logGroupSizes() {
@@ -189,8 +247,8 @@ public class Equalizer {
     }
 
     public static void logSumofGroupSizes() {
-        System.out.println("sum : " + (aboveTheMean.size()
-                + aroundTheMean.size() + belowTheMean.size()));
+//        System.out.println("sum : " + (aboveTheMean.size()
+//                + aroundTheMean.size() + belowTheMean.size()));
     }
 
     public static void logEntireGroups() {
@@ -247,8 +305,8 @@ class Pair{
     public int y;
 
     public Pair(int i, int j) {
-        this.x=x;
-        this.x=x;
+        this.x=i;
+        this.x=j;
     }
 }
 
