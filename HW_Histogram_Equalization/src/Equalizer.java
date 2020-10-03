@@ -135,8 +135,9 @@ public class Equalizer {
 
     public static void swapRandomPixel(int startIntense, int destIntense){
 
-        System.out.println("so we wanna swap : start : " +
-                startIntense + " dest : "+ destIntense);
+        System.out.println("so we wanna swap : start intensity : " +
+                startIntense + " with freq : " + numPerIntensity[startIntense] +
+                " dest intensity : " + destIntense  + " with freq : " + numPerIntensity[destIntense]);
 
         Random rand = new Random();
         int randomPixelIndex = rand.nextInt
@@ -152,6 +153,8 @@ public class Equalizer {
 
         determineIntensityGroupStatus(startIntense);
         determineIntensityGroupStatus(destIntense);
+
+        logSumofGroupSizes();
 
         SortArrays();
     }
@@ -176,6 +179,7 @@ public class Equalizer {
 
         System.out.println("log : intensity : "+ intensityGroup +
                 " has been found : " + iStatus + " freq : "+intenseFreq);
+        logGroupSizes();
     }
 
     public static void logGroupSizes() {
@@ -184,17 +188,22 @@ public class Equalizer {
         System.out.println("belowTheMean.size() : " + belowTheMean.size());
     }
 
+    public static void logSumofGroupSizes() {
+        System.out.println("sum : " + (aboveTheMean.size()
+                + aroundTheMean.size() + belowTheMean.size()));
+    }
+
     public static void logEntireGroups() {
         for (int i = 0; i <aboveTheMean.size() ; i++) {
-            System.out.println("above i : "+ i + " inten : " + aboveTheMean.get(i)
+            System.out.println("above i : "+ i + " intensity : " + aboveTheMean.get(i)
                     + " freq : " + numPerIntensity[aboveTheMean.get(i)]);
         }
         for (int i = 0; i <aroundTheMean.size() ; i++) {
-            System.out.println("around i : "+ i + " inten : " + aroundTheMean.get(i)
+            System.out.println("around i : "+ i + " intensity : " + aroundTheMean.get(i)
                     + " freq : " +  numPerIntensity[aroundTheMean.get(i)]);
         }
         for (int i = 0; i <belowTheMean.size() ; i++) {
-            System.out.println("below i : "+ i + " inten : "  + belowTheMean.get(i)
+            System.out.println("below i : "+ i + " intensity : "  + belowTheMean.get(i)
                     + " freq : " +  numPerIntensity[belowTheMean.get(i)]);
         }
 
@@ -224,7 +233,7 @@ public class Equalizer {
 
     public static void logEntireStatusOfGroups() {
         for (int i = 0; i <statusPerIntensity.length ; i++) {
-            System.out.println("intense : " + i +
+            System.out.println("intensity : " + i +
                     " status :" + statusPerIntensity[i] +
                     " freq : " + numPerIntensity[i]);
         }
