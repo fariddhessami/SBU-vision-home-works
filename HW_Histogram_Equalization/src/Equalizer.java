@@ -17,6 +17,8 @@ public class Equalizer {
     public static ArrayList<Integer> aroundTheMean;
     public static ArrayList<Integer> belowTheMean;
 
+    public static IntensityStatus statusPerIntensity[];
+
     public static void main(String[] args) throws IOException {
 
 
@@ -44,6 +46,8 @@ public class Equalizer {
         aboveTheMean = new ArrayList<>();
         aroundTheMean = new ArrayList<>();
         belowTheMean = new ArrayList<>();
+
+        statusPerIntensity = new IntensityStatus[grayScaleRange];
 
         Raster raster = img.getData();
         for (int i = 0; i < width; i++) {
@@ -89,7 +93,7 @@ public class Equalizer {
 
         System.out.println("after :");
         logGroupSizes();
-//        logEntireGroups();
+        logEntireGroups();
 
     }//main
 
@@ -136,15 +140,20 @@ public class Equalizer {
     private static void determineIntensityGroupStatus(int intensityGroup) {
 
         int intenseFreq = numPerIntensity[intensityGroup];
+        IntensityStatus iStatus;
 
         if (intenseFreq>(mean+1)){
             aboveTheMean.add(intensityGroup);
+            iStatus = IntensityStatus.above;
         }else if (intenseFreq<mean){
             belowTheMean.add(intensityGroup);
+            iStatus = IntensityStatus.below;
         }else{
             aroundTheMean.add(intensityGroup);
+            iStatus = IntensityStatus.around;
         }
 
+        statusPerIntensity[intensityGroup] = iStatus;
     }
 
     public static void logGroupSizes() {
@@ -201,4 +210,10 @@ class Pair_Value{
                 Equalizer.numPerIntensity[pv.value]);
 //        return Integer.compare(pv.value,this.value);
     }
+}
+
+enum IntensityStatus {
+    above,
+    around,
+    below
 }
