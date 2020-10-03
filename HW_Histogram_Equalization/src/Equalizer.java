@@ -70,7 +70,7 @@ public class Equalizer {
                 Pair_Value currentPv = new Pair_Value(intensity,currentPair);
 
                 arrOfPairsPerIntense[intensity].add(currentPair);
-                System.out.println("salam 1234");
+
 
 
 
@@ -86,7 +86,6 @@ public class Equalizer {
 //        logEntireGroups();
         logGroupSizes();
         logSumofGroupSizes();
-        System.out.println("before 2:");
 
 
         int loops = grayScaleRange;
@@ -168,7 +167,6 @@ public class Equalizer {
         try {
             File f = new File("picture-result.png");
             ImageIO.write(resBufImg, "png", f);
-            System.out.println("alo! " + resultImgArr.length  + " , " + resultImgArr[0].length);
         }catch (Exception e){
             System.out.println(e.toString());
         }
@@ -205,7 +203,6 @@ public class Equalizer {
                 arrOfPairsPerIntense[startIntense].remove(randomPixelIndex);
         arrOfPairsPerIntense[destIntense].add(randomPixel);
 
-        System.out.println("behold : pixel pair : "+ randomPixel.x + " , " + randomPixel.y);
 
         numPerIntensity[startIntense]--;
         numPerIntensity[destIntense]++;
