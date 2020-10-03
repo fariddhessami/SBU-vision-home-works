@@ -147,7 +147,9 @@ public class Equalizer {
 
         for (int i = 0; i <resultImgArr.length ; i++) {
             for (int j = 0; j <resultImgArr[0].length ; j++) {
-                resBufImg.setRGB(i,j,resultImgArr[i][j]);
+                Color gray = new Color(resultImgArr[i][j],
+                        resultImgArr[i][j], resultImgArr[i][j]);
+                resBufImg.setRGB(i,j,gray.getRGB());
                 System.out.println("hello : i "+i+" j "+j+ " : "+ resultImgArr[i][j]);
             }
         }
